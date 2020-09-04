@@ -9,7 +9,7 @@ class City:
     self.lat = lat
     self.lon = lon
   def __str__(self):
-    return f"{self.name} {self.lat} {self.lon}"
+    return f"{self.name}({self.lat},{self.lon})"
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -123,12 +123,43 @@ print(f"\n({int(latt1)}, {lonn1}) ({latt2}, {lonn2})\n")
 
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
+  inp1 = [lat1,lon1]
+  inp2 = [lat2,lon2]
+  upper_right = []
+  lower_left = []
+  upper_left = []
+  lower_right = []
+
+  if ((float(inp1[1]) > float(inp2[1])) and (float(inp1[0]) > float(inp2[0])) ):
+    upper_right = inp1 # ending range
+    lower_left = inp2 # starting-range
+  elif((float(inp1[1]) < float(inp2[1])) and (float(inp1[0]) < float(inp2[0]))):
+    upper_right = inp2
+    lower_left = inp1
+  elif((float(inp1[1]) < float(inp2[1])) and (float(inp1[0]) > float(inp2[0]))):
+    upper_left = inp1 # starting range
+    lower_right = inp2 # ending range
+  elif((float(inp1[1]) > float(inp2[1])) and (float(inp1[0]) < float(inp2[0]))):
+    upper_left = inp2
+    lower_right = inp1
+
+  if (len(upper_right) > 0):
+    latt1 = float(lower_left[0])
+    lonn1 = float(lower_left[1])
+    latt2 = float(upper_right[0])
+    lonn2 = float(upper_right[1])
+  elif (len(upper_left) > 0):
+    latt1 = float(upper_left[0])
+    lonn1 = float(upper_left[1])
+    latt2 = float(lower_right[0])
+    lonn2 = float(lower_right[1])
+
   # within will hold the cities that fall within the specified region
-  within = [i.name + f"({i.lat},{i.lon})" for i in cities if((int(i.lat) in range(int(lat1), int(lat2))) and (int(i.lon) in range(int(lon1), int(lon2))))]
+  within = [i for i in cities if((int(i.lat) in range(int(latt1), int(latt2))) and (int(i.lon) in range(int(lonn1), int(lonn2))))]
   
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
 
   return within
 
-print(cityreader_stretch(latt1, lonn1, latt2, lonn2, cityreader(cities)))
+print(cityreader_stretch(40, -50, 12, -120, cityreader(cities)))
