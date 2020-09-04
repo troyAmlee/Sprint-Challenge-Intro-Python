@@ -62,8 +62,10 @@ for c in cities:
 #
 # Example I/O:
 #
-# Enter lat1,lon1: 45,-100
-# Enter lat2,lon2: 32,-120
+# Enter lat1,lon1: 45,-100 -- upper-right - ending range
+# Enter lat2,lon2: 32,-120 -- lower-left - starting range
+# Enter lat1,lon1: 32,-100 -- upper-left - starting range
+# Enter lat2,lon2: 45,-120 -- lower-right - ending range
 # Albuquerque: (35.1055,-106.6476)
 # Riverside: (33.9382,-117.3949)
 # San Diego: (32.8312,-117.1225)
@@ -76,11 +78,57 @@ for c in cities:
 
 # TODO Get latitude and longitude values from the user
 
+print("Enter lat1,lon1: 45,-100")
+print("Enter lat2,lon2: 32,-120")
+
+firstinput =  input("Enter lat1,lon1 (y,x): ")
+inp1 = firstinput.split(',')
+secondinput =  input("Enter lat2,lon2 (y,x): ")
+inp2 = secondinput.split(',')
+
+# Evaluate |upper-right vs lower-left||upper-left vs lower-right|
+
+upper_right = []
+lower_left = []
+upper_left = []
+lower_right = []
+
+if ((float(inp1[1]) > float(inp2[1])) and (float(inp1[0]) > float(inp2[0])) ):
+  upper_right = inp1 # ending range
+  lower_left = inp2 # starting-range
+elif((float(inp1[1]) < float(inp2[1])) and (float(inp1[0]) < float(inp2[0]))):
+  upper_right = inp2
+  lower_left = inp1
+elif((float(inp1[1]) < float(inp2[1])) and (float(inp1[0]) > float(inp2[0]))):
+  upper_left = inp1 # starting range
+  lower_right = inp2 # ending range
+elif((float(inp1[1]) > float(inp2[1])) and (float(inp1[0]) < float(inp2[0]))):
+  upper_left = inp2
+  lower_right = inp1
+
+if (len(upper_right) > 0):
+  latt1 = float(lower_left[0])
+  lonn1 = float(lower_left[1])
+  latt2 = float(upper_right[0])
+  lonn2 = float(upper_right[1])
+elif (len(upper_left) > 0):
+  latt1 = float(upper_left[0])
+  lonn1 = float(upper_left[1])
+  latt2 = float(lower_right[0])
+  lonn2 = float(lower_right[1])
+
+
+
+print(f"\n({int(latt1)}, {lonn1}) ({latt2}, {lonn2})\n")
+
+
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
-  within = []
+  within = [i.name + f"({i.lat},{i.lon})" for i in cities if((int(i.lat) in range(int(lat1), int(lat2))) and (int(i.lon) in range(int(lon1), int(lon2))))]
   
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
 
   return within
+
+print(cityreader_stretch(latt1, lonn1, latt2, lonn2, cityreader(cities)))
